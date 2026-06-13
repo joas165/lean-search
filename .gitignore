@@ -67,6 +67,9 @@ lean_export/.lake/
 
 # Data & Embeddings (Large Files)
 **/data/
+**/data/cleaned_decls.json
+**/data/embeddings.npy
+**/data/faiss.index
 
 #FAISS
 *.faiss
