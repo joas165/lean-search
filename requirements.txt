@@ -1,0 +1,10 @@
+sentence-transformers 
+faiss-cpu 
+rank-bm25 
+fastapi 
+jinja2
+uvicorn 
+numpy 
+tqdm
+openai
+requests

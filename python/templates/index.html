@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lean Mathlib RAG Search</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ["JetBrains Mono", "Consolas", "monospace"],
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-full bg-zinc-50 text-zinc-950 antialiased">
+  <main class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+    <header class="mb-6 flex flex-col gap-3 border-b border-zinc-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-sm font-medium uppercase tracking-wide text-teal-700">mathlib retrieval</p>
+        <h1 class="mt-1 text-3xl font-semibold tracking-normal text-zinc-950 sm:text-4xl">Lean Mathlib RAG Search</h1>
+      </div>
+      <a href="/api" class="inline-flex h-10 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-medium text-zinc-800 shadow-sm transition hover:border-teal-600 hover:text-teal-700">
+        API
+      </a>
+    </header>
+
+    <section class="mb-6">
+      <form action="/" method="get" class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm sm:grid-cols-[1fr_8rem_auto]">
+        <label class="sr-only" for="q">Search query</label>
+        <input
+          id="q"
+          name="q"
+          type="search"
+          value="{{ query }}"
+          placeholder="commutativity of addition"
+          autofocus
+          class="h-12 w-full rounded-md border border-zinc-300 bg-white px-4 text-base text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        >
+
+        <label class="sr-only" for="k">Results</label>
+        <input
+          id="k"
+          name="k"
+          type="number"
+          min="1"
+          max="25"
+          value="{{ k }}"
+          class="h-12 w-full rounded-md border border-zinc-300 bg-white px-3 text-base text-zinc-950 outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+        >
+
+        <button type="submit" class="inline-flex h-12 items-center justify-center rounded-md bg-teal-700 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-200">
+          Search
+        </button>
+      </form>
+    </section>
+
+    {% if error %}
+      <section class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        {{ error }}
+      </section>
+    {% endif %}
+
+    {% if searched and not error %}
+      <section class="mb-4 flex items-center justify-between gap-3">
+        <h2 class="text-lg font-semibold text-zinc-900">Results</h2>
+        <p class="text-sm text-zinc-500">{{ results|length }} matches for "{{ query }}"</p>
+      </section>
+
+      {% if results %}
+        <ol class="space-y-3">
+          {% for result in results %}
+            <li class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+              <div class="mb-3 flex items-start justify-between gap-4">
+                <h3 class="break-all font-mono text-base font-semibold text-teal-800">{{ result.name }}</h3>
+                <span class="shrink-0 rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600">#{{ loop.index }}</span>
+              </div>
+              <pre class="overflow-x-auto whitespace-pre-wrap break-words rounded-md bg-zinc-950 p-4 font-mono text-sm leading-6 text-zinc-100">{{ result.type }}</pre>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <section class="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-600">
+          No matches found.
+        </section>
+      {% endif %}
+    {% endif %}
+  </main>
+</body>
+</html>
